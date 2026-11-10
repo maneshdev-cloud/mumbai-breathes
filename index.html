@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#f4f8ff">
+<title>Mumbai Breathes — The Air Mumbai Breathes</title>
+<style>
+  :root{
+    --ink:#1c1c1e;
+    --ink2:#636366;
+    --ink3:#8e8e93;
+    --glass:rgba(255,255,255,.62);
+    --glass-brd:rgba(255,255,255,.75);
+    --shadow:0 14px 34px rgba(50,60,120,.10), 0 2px 8px rgba(50,60,120,.06);
+    --r-lg:28px;
+    --r-md:22px;
+    --blob1:#ffd9a0;
+    --blob2:#a9d6ff;
+    --ease-spring:cubic-bezier(.22,1.36,.36,1);
+    --ease-out:cubic-bezier(.22,1,.36,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    color:var(--ink);
+    background:linear-gradient(180deg,#eef5ff 0%,#f7f9ff 34%,#fdf8ef 100%);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  /* ---------- ambient animated background ---------- */
+  .bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+  .blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.55;will-change:transform}
+  .blob.b1{width:420px;height:420px;background:var(--blob1);top:-140px;right:-120px;animation:drift1 26s ease-in-out infinite alternate}
+  .blob.b2{width:360px;height:360px;background:var(--blob2);bottom:-120px;left:-130px;animation:drift2 32s ease-in-out infinite alternate}
+  .blob.b3{width:240px;height:240px;background:#ffffff;top:38%;left:55%;opacity:.35;animation:drift1 38s ease-in-out infinite alternate-reverse}
+  @keyframes drift1{from{transform:translate(0,0) scale(1)}to{transform:translate(-46px,60px) scale(1.12)}}
+  @keyframes drift2{from{transform:translate(0,0) scale(1.05)}to{transform:translate(52px,-48px) scale(.94)}}
+
+  .wrap{position:relative;z-index:1;max-width:430px;margin:0 auto;padding:26px 16px 30px}
+
+  /* ---------- entrance ---------- */
+  .rise{opacity:0;transform:translateY(18px);animation:rise .8s var(--ease-out) forwards}
+  @keyframes rise{to{opacity:1;transform:translateY(0)}}
+
+  /* ---------- hero ---------- */
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:7px;
+    font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink2);
+    background:var(--glass);border:1px solid var(--glass-brd);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    padding:6px 12px;border-radius:999px;box-shadow:var(--shadow);
+  }
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:#ff5a52;animation:blink 2.2s ease-in-out infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+  h1{
+    font-size:42px;line-height:1.04;font-weight:800;letter-spacing:-.02em;margin:16px 2px 0;
+  }
+  h1 .thin{display:block;font-weight:600;color:var(--ink2);font-size:19px;letter-spacing:-.01em;margin-top:7px}
+  .hero-num{display:flex;align-items:flex-end;gap:12px;margin:22px 2px 0}
+  .hero-num .big{font-size:84px;font-weight:800;letter-spacing:-.04em;line-height:.92;font-variant-numeric:tabular-nums}
+  .hero-num .unit{padding-bottom:10px}
+  .hero-num .unit .u1{font-size:14px;font-weight:700;color:var(--ink)}
+  .hero-num .unit .u2{font-size:12.5px;color:var(--ink2);margin-top:2px}
+  .chip{
+    display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;
+    padding:5px 11px;border-radius:999px;color:#fff;white-space:nowrap;
+  }
+  .chip i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.9);display:block}
+  .chip.soft{color:var(--ink)}
+  .chip.soft i{background:currentColor}
+  .hero-summary{font-size:17.5px;line-height:1.45;font-weight:500;margin:16px 2px 0;letter-spacing:-.01em}
+  .hero-meta{font-size:12.5px;color:var(--ink3);margin:9px 2px 0}
+
+  /* ---------- cards ---------- */
+  .card{
+    background:var(--glass);border:1px solid var(--glass-brd);
+    backdrop-filter:blur(20px) saturate(1.5);-webkit-backdrop-filter:blur(20px) saturate(1.5);
+    border-radius:var(--r-lg);box-shadow:var(--shadow);padding:18px;margin-top:16px;
+  }
+  .card h2{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);display:flex;justify-content:space-between;align-items:baseline}
+  .card h2 .hint{letter-spacing:0;text-transform:none;font-weight:500;color:var(--ink3);font-size:12px}
+
+  /* ---------- map ---------- */
+  .mapbox{margin-top:10px}
+  .mapbox svg{width:100%;height:auto;display:block}
+  .map-caption{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:12.5px;color:var(--ink2)}
+  .map-caption b{color:var(--ink);font-size:13.5px}
+  .station-dot{cursor:pointer}
+  .station-dot .pulse{transform-box:fill-box;transform-origin:center;animation:pulse 2.8s ease-out infinite}
+  @keyframes pulse{0%{transform:scale(.5);opacity:.5}70%{transform:scale(2.1);opacity:0}100%{transform:scale(2.1);opacity:0}}
+  .station-dot .core{transition:r .35s var(--ease-spring)}
+  .station-dot text{pointer-events:none}
+
+  /* ---------- station cards row ---------- */
+  .scroller{
+    display:flex;gap:12px;overflow-x:auto;padding:16px 16px 8px;margin:0 -16px;
+    scroll-snap-type:x mandatory;scrollbar-width:none;
+  }
+  .scroller::-webkit-scrollbar{display:none}
+  .scard{
+    scroll-snap-align:start;flex:0 0 148px;text-align:left;cursor:pointer;
+    border:1px solid var(--glass-brd);border-radius:var(--r-md);padding:14px 14px 13px;
+    backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);
+    box-shadow:0 8px 22px rgba(50,60,120,.08);
+    transition:transform .35s var(--ease-spring), box-shadow .35s ease;
+    font-family:inherit;color:var(--ink);
+  }
+  .scard:active{transform:scale(.96)}
+  .scard.sel{box-shadow:0 12px 28px rgba(50,60,120,.16);transform:translateY(-3px)}
+  .scard .nm{font-size:14.5px;font-weight:700;letter-spacing:-.01em;white-space:nowrap}
+  .scard .val{font-size:37px;font-weight:800;letter-spacing:-.03em;line-height:1.06;font-variant-numeric:tabular-nums;margin-top:3px}
+  .scard .val small{font-size:12px;font-weight:600;color:var(--ink2);letter-spacing:0}
+  .scard .tmr{font-size:11.8px;line-height:1.5;color:var(--ink2);margin-top:9px;border-top:1px solid rgba(60,60,67,.09);padding-top:8px}
+  .scard .tmr b{color:var(--ink);font-weight:700}
+
+  /* ---------- chart ---------- */
+  .detail-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  .detail-head .nm{font-size:23px;font-weight:800;letter-spacing:-.02em}
+  .detail-head .sub{font-size:12.5px;color:var(--ink2);margin-top:2px}
+  .detail-now{text-align:right}
+  .detail-now .v{font-size:40px;font-weight:800;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+  .detail-now .l{font-size:11.5px;color:var(--ink3);margin-top:3px}
+  .chartbox{position:relative;margin-top:10px;touch-action:pan-y}
+  .chartbox svg{display:block;width:100%}
+  .tooltip{
+    position:absolute;top:2px;transform:translate(-50%,0);pointer-events:none;
+    background:rgba(28,28,30,.82);color:#fff;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    border-radius:16px;padding:9px 12px 8px;min-width:132px;opacity:0;transition:opacity .18s ease;
+    box-shadow:0 10px 24px rgba(0,0,0,.25);z-index:5;
+  }
+  .tooltip.on{opacity:1}
+  .tooltip .tt-t{font-size:11px;font-weight:600;color:rgba(255,255,255,.65);letter-spacing:.02em}
+  .tooltip .tt-v{font-size:23px;font-weight:800;letter-spacing:-.02em;line-height:1.15;font-variant-numeric:tabular-nums}
+  .tooltip .tt-v small{font-size:11px;font-weight:600;color:rgba(255,255,255,.65)}
+  .tooltip .tt-c{font-size:12px;font-weight:700;margin-top:1px}
+  .tooltip .tt-a{font-size:11.5px;line-height:1.35;color:rgba(255,255,255,.78);margin-top:2px}
+  .legend{display:flex;gap:16px;margin-top:8px;font-size:12px;color:var(--ink2)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend .ln{width:20px;height:0;border-top:3px solid #3a3a3c;border-radius:2px}
+  .legend .ln.fc{border-top:3px dashed #dd3a2d}
+
+  /* ---------- hourly strip ---------- */
+  .hours{display:flex;gap:8px;overflow-x:auto;padding:12px 2px 4px;scrollbar-width:none}
+  .hours::-webkit-scrollbar{display:none}
+  .hr{
+    flex:0 0 54px;text-align:center;border-radius:16px;padding:8px 2px 7px;
+    border:1px solid rgba(255,255,255,.6);
+  }
+  .hr .h{font-size:10.5px;font-weight:700;color:var(--ink2);letter-spacing:.02em}
+  .hr .v{font-size:16.5px;font-weight:800;font-variant-numeric:tabular-nums;margin-top:2px}
+  .hr .tag{font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-top:1px;height:11px}
+
+  /* ---------- plan your day ---------- */
+  .plan{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+  .plan-row{display:flex;gap:12px;align-items:center;border-radius:20px;padding:13px 14px;border:1px solid rgba(255,255,255,.65)}
+  .plan-ic{flex:0 0 40px;width:40px;height:40px;border-radius:13px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.75);box-shadow:0 4px 10px rgba(50,60,120,.08)}
+  .plan-row .pt{font-size:16.5px;font-weight:800;letter-spacing:-.01em}
+  .plan-row .ps{font-size:12.8px;color:var(--ink2);line-height:1.4;margin-top:1px}
+  .plan-row .ps b{color:var(--ink)}
+  .day2{font-size:13.5px;color:var(--ink2);line-height:1.5;margin-top:12px;border-top:1px solid rgba(60,60,67,.09);padding-top:11px}
+  .day2 b{color:var(--ink)}
+
+  /* ---------- footer ---------- */
+  footer{margin-top:22px;padding:0 4px}
+  .foot-note{font-size:11.8px;line-height:1.55;color:var(--ink3)}
+  .foot-credit{margin-top:12px;font-size:13px;font-weight:600;color:var(--ink2);line-height:1.55}
+  .foot-credit b{color:var(--ink)}
+
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+    html{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true">
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+</div>
+
+<main class="wrap">
+  <!-- HERO -->
+  <header>
+    <span class="eyebrow rise"><span class="dot"></span> Mumbai · Live Forecast</span>
+    <h1 class="rise" style="animation-delay:.06s">The air Mumbai breathes
+      <span class="thin">Hour-by-hour PM2.5, today through Thursday</span>
+    </h1>
+    <div class="hero-num rise" style="animation-delay:.12s">
+      <div class="big" id="cityNow">–</div>
+      <div class="unit">
+        <div class="u1">µg/m³ PM2.5</div>
+        <div class="u2">city average, right now</div>
+        <div style="margin-top:7px"><span class="chip" id="cityChip"><i></i><span>–</span></span></div>
+      </div>
+    </div>
+    <p class="hero-summary rise" style="animation-delay:.18s" id="citySummary">…</p>
+    <p class="hero-meta rise" style="animation-delay:.22s" id="cityMeta"></p>
+  </header>
+
+  <!-- MAP -->
+  <section class="card rise" style="animation-delay:.26s" aria-label="Station map">
+    <h2>Across the city <span class="hint">tap a station</span></h2>
+    <div class="mapbox" id="mapbox"></div>
+    <div class="map-caption"><span>Cleanest right now: <b id="cleanNow">–</b></span><span>Dirtiest: <b id="dirtyNow">–</b></span></div>
+  </section>
+
+  <!-- STATION CARDS -->
+  <div class="scroller rise" style="animation-delay:.32s" id="scroller" role="tablist" aria-label="Stations"></div>
+
+  <!-- DETAIL + CHART -->
+  <section class="card rise" style="animation-delay:.38s" aria-label="Station detail">
+    <div class="detail-head">
+      <div>
+        <div class="nm" id="dName">–</div>
+        <div class="sub" id="dSub">–</div>
+      </div>
+      <div class="detail-now">
+        <div class="v" id="dNow">–</div>
+        <div class="l">µg/m³ right now</div>
+      </div>
+    </div>
+    <div class="chartbox" id="chartbox">
+      <div class="tooltip" id="tooltip" aria-hidden="true"></div>
+    </div>
+    <div class="legend">
+      <span><span class="ln"></span> Measured</span>
+      <span><span class="ln fc"></span> Our forecast</span>
+      <span style="margin-left:auto" id="chartRange"></span>
+    </div>
+
+    <h2 style="margin-top:20px">Tomorrow, hour by hour <span class="hint" id="tmrDate"></span></h2>
+    <div class="hours" id="hours"></div>
+  </section>
+
+  <!-- PLAN YOUR DAY -->
+  <section class="card rise" style="animation-delay:.44s" aria-label="Plan your day">
+    <h2>Plan your day · <span style="letter-spacing:0;text-transform:none" id="planStation"></span></h2>
+    <div class="plan">
+      <div class="plan-row" id="planBest">
+        <div class="plan-ic" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4.4" fill="#f5a623"/><g stroke="#f5a623" stroke-width="2" stroke-linecap="round"><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5 5l1.7 1.7M17.3 17.3L19 19M19 5l-1.7 1.7M6.7 17.3L5 19"/></g></svg>
+        </div>
+        <div><div class="pt" id="bestT">–</div><div class="ps" id="bestS"></div></div>
+      </div>
+      <div class="plan-row" id="planWorst">
+        <div class="plan-ic" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3.6 22 20H2L12 3.6Z" fill="#dd3a2d" opacity=".16"/><path d="M12 9v4.6" stroke="#dd3a2d" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="17" r="1.4" fill="#dd3a2d"/></svg>
+        </div>
+        <div><div class="pt" id="worstT">–</div><div class="ps" id="worstS"></div></div>
+      </div>
+    </div>
+    <p class="day2" id="day2"></p>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="rise" style="animation-delay:.5s">
+    <p class="foot-note">PM2.5 levels use CPCB category bands for PM2.5 (24-hour bands, shown here against hourly values so the colours stay easy to read). The solid line is measured readings; the coloured line is our model&rsquo;s forecast — the scored forecast window is Wed 11 – Thu 12 Nov 2026.</p>
+    <p class="foot-credit">Forecasts by <b>Manesh Jadhav&rsquo;s model</b> — Google Mumbai Data Challenge (Zindi).<br>Data: CPCB via OpenAQ · Zindi challenge data. Made with care in Mumbai.</p>
+  </footer>
+</main>
+
+<script>
+"use strict";
+const DATA = /*DATA_START*/{"generated":"2026-11-10","forecastDates":{"tomorrow":"2026-11-11","dayAfter":"2026-11-12"},"city":{"now":90.3,"summary":"The worst air tomorrow arrives early \u2014 around 1 AM in Malad West (PM2.5 near 225). By mid-morning, most areas breathe easier."},"stations":[{"id":11611,"name":"Malad West","fullName":"Malad West, Mumbai - IITM","lat":19.19709,"lon":72.82204,"now":{"value":189.9,"t":"2026-11-10T08:00:00+05:30"},"observed":[{"t":"2026-11-08T09:00:00+05:30","v":45.4},{"t":"2026-11-08T10:00:00+05:30","v":42.8},{"t":"2026-11-08T11:00:00+05:30","v":32.7},{"t":"2026-11-08T12:00:00+05:30","v":28.3},{"t":"2026-11-08T13:00:00+05:30","v":31.4},{"t":"2026-11-08T14:00:00+05:30","v":28.9},{"t":"2026-11-08T15:00:00+05:30","v":19.7},{"t":"2026-11-08T16:00:00+05:30","v":15.9},{"t":"2026-11-08T17:00:00+05:30","v":19.6},{"t":"2026-11-08T18:00:00+05:30","v":33.8},{"t":"2026-11-08T19:00:00+05:30","v":50.6},{"t":"2026-11-08T20:00:00+05:30","v":93.9},{"t":"2026-11-08T21:00:00+05:30","v":190.8},{"t":"2026-11-08T22:00:00+05:30","v":394.3},{"t":"2026-11-08T23:00:00+05:30","v":null},{"t":"2026-11-09T00:00:00+05:30","v":null},{"t":"2026-11-09T01:00:00+05:30","v":590.8},{"t":"2026-11-09T02:00:00+05:30","v":325.3},{"t":"2026-11-09T03:00:00+05:30","v":185.8},{"t":"2026-11-09T04:00:00+05:30","v":115.2},{"t":"2026-11-09T05:00:00+05:30","v":78.8},{"t":"2026-11-09T06:00:00+05:30","v":64.6},{"t":"2026-11-09T07:00:00+05:30","v":43.9},{"t":"2026-11-09T08:00:00+05:30","v":45.0},{"t":"2026-11-09T09:00:00+05:30","v":61.9},{"t":"2026-11-09T10:00:00+05:30","v":null},{"t":"2026-11-09T11:00:00+05:30","v":56.5},{"t":"2026-11-09T12:00:00+05:30","v":45.7},{"t":"2026-11-09T13:00:00+05:30","v":39.2},{"t":"2026-11-09T14:00:00+05:30","v":35.5},{"t":"2026-11-09T15:00:00+05:30","v":32.4},{"t":"2026-11-09T16:00:00+05:30","v":35.9},{"t":"2026-11-09T17:00:00+05:30","v":32.1},{"t":"2026-11-09T18:00:00+05:30","v":42.2},{"t":"2026-11-09T19:00:00+05:30","v":63.9},{"t":"2026-11-09T20:00:00+05:30","v":72.6},{"t":"2026-11-09T21:00:00+05:30","v":82.6},{"t":"2026-11-09T22:00:00+05:30","v":119.4},{"t":"2026-11-09T23:00:00+05:30","v":null},{"t":"2026-11-10T00:00:00+05:30","v":null},{"t":"2026-11-10T01:00:00+05:30","v":260.5},{"t":"2026-11-10T02:00:00+05:30","v":234.5},{"t":"2026-11-10T03:00:00+05:30","v":226.5},{"t":"2026-11-10T04:00:00+05:30","v":246.1},{"t":"2026-11-10T05:00:00+05:30","v":244.9},{"t":"2026-11-10T06:00:00+05:30","v":206.3},{"t":"2026-11-10T07:00:00+05:30","v":194.3},{"t":"2026-11-10T08:00:00+05:30","v":189.9}],"forecast":[{"t":"2026-11-10T09:00:00+05:30","v":100.3,"s":false},{"t":"2026-11-10T10:00:00+05:30","v":53.9,"s":false},{"t":"2026-11-10T11:00:00+05:30","v":96.5,"s":false},{"t":"2026-11-10T12:00:00+05:30","v":88.9,"s":false},{"t":"2026-11-10T13:00:00+05:30","v":84.5,"s":false},{"t":"2026-11-10T14:00:00+05:30","v":81.8,"s":false},{"t":"2026-11-10T15:00:00+05:30","v":79.7,"s":false},{"t":"2026-11-10T16:00:00+05:30","v":82.1,"s":false},{"t":"2026-11-10T17:00:00+05:30","v":79.4,"s":false},{"t":"2026-11-10T18:00:00+05:30","v":86.5,"s":false},{"t":"2026-11-10T19:00:00+05:30","v":101.7,"s":false},{"t":"2026-11-10T20:00:00+05:30","v":107.8,"s":false},{"t":"2026-11-10T21:00:00+05:30","v":114.8,"s":false},{"t":"2026-11-10T22:00:00+05:30","v":140.5,"s":false},{"t":"2026-11-10T23:00:00+05:30","v":76.0,"s":false},{"t":"2026-11-11T00:00:00+05:30","v":73.9,"s":true},{"t":"2026-11-11T01:00:00+05:30","v":225.2,"s":true},{"t":"2026-11-11T02:00:00+05:30","v":212.2,"s":true},{"t":"2026-11-11T03:00:00+05:30","v":208.2,"s":true},{"t":"2026-11-11T04:00:00+05:30","v":218.0,"s":true},{"t":"2026-11-11T05:00:00+05:30","v":217.4,"s":true},{"t":"2026-11-11T06:00:00+05:30","v":198.1,"s":true},{"t":"2026-11-11T07:00:00+05:30","v":192.1,"s":true},{"t":"2026-11-11T08:00:00+05:30","v":189.9,"s":true},{"t":"2026-11-11T09:00:00+05:30","v":125.9,"s":true},{"t":"2026-11-11T10:00:00+05:30","v":53.9,"s":true},{"t":"2026-11-11T11:00:00+05:30","v":123.2,"s":true},{"t":"2026-11-11T12:00:00+05:30","v":117.8,"s":true},{"t":"2026-11-11T13:00:00+05:30","v":114.6,"s":true},{"t":"2026-11-11T14:00:00+05:30","v":112.7,"s":true},{"t":"2026-11-11T15:00:00+05:30","v":111.2,"s":true},{"t":"2026-11-11T16:00:00+05:30","v":112.9,"s":true},{"t":"2026-11-11T17:00:00+05:30","v":111.0,"s":true},{"t":"2026-11-11T18:00:00+05:30","v":116.1,"s":true},{"t":"2026-11-11T19:00:00+05:30","v":126.9,"s":true},{"t":"2026-11-11T20:00:00+05:30","v":131.3,"s":true},{"t":"2026-11-11T21:00:00+05:30","v":136.3,"s":true},{"t":"2026-11-11T22:00:00+05:30","v":154.6,"s":true},{"t":"2026-11-11T23:00:00+05:30","v":76.0,"s":true},{"t":"2026-11-12T00:00:00+05:30","v":73.9,"s":true},{"t":"2026-11-12T01:00:00+05:30","v":225.2,"s":true},{"t":"2026-11-12T02:00:00+05:30","v":212.2,"s":true},{"t":"2026-11-12T03:00:00+05:30","v":208.2,"s":true},{"t":"2026-11-12T04:00:00+05:30","v":218.0,"s":true},{"t":"2026-11-12T05:00:00+05:30","v":217.4,"s":true},{"t":"2026-11-12T06:00:00+05:30","v":198.1,"s":true},{"t":"2026-11-12T07:00:00+05:30","v":192.1,"s":true},{"t":"2026-11-12T08:00:00+05:30","v":189.9,"s":true},{"t":"2026-11-12T09:00:00+05:30","v":125.9,"s":true},{"t":"2026-11-12T10:00:00+05:30","v":53.9,"s":true},{"t":"2026-11-12T11:00:00+05:30","v":123.2,"s":true},{"t":"2026-11-12T12:00:00+05:30","v":117.8,"s":true},{"t":"2026-11-12T13:00:00+05:30","v":114.6,"s":true},{"t":"2026-11-12T14:00:00+05:30","v":112.7,"s":true},{"t":"2026-11-12T15:00:00+05:30","v":111.2,"s":true},{"t":"2026-11-12T16:00:00+05:30","v":112.9,"s":true},{"t":"2026-11-12T17:00:00+05:30","v":111.0,"s":true},{"t":"2026-11-12T18:00:00+05:30","v":116.1,"s":true},{"t":"2026-11-12T19:00:00+05:30","v":126.9,"s":true},{"t":"2026-11-12T20:00:00+05:30","v":131.3,"s":true},{"t":"2026-11-12T21:00:00+05:30","v":136.3,"s":true},{"t":"2026-11-12T22:00:00+05:30","v":154.6,"s":true},{"t":"2026-11-12T23:00:00+05:30","v":76.0,"s":true}],"days":{"2026-11-11":{"avg":144.1,"peak":{"value":225.2,"hour":"1 AM"},"best":{"value":53.9,"hour":"10 AM"},"bestWindow":{"startHour":"10 AM","endHour":"1 PM","avg":98.3},"worstWindow":{"startHour":"1 AM","endHour":"4 AM","avg":215.2}},"2026-11-12":{"avg":144.1,"peak":{"value":225.2,"hour":"1 AM"},"best":{"value":53.9,"hour":"10 AM"},"bestWindow":{"startHour":"10 AM","endHour":"1 PM","avg":98.3},"worstWindow":{"startHour":"1 AM","endHour":"4 AM","avg":215.2}}}},{"id":3409511,"name":"Shivaji Nagar","fullName":"Shivaji Nagar, Mumbai - BMC","lat":19.060498,"lon":72.923356,"now":{"value":77.0,"t":"2026-11-10T08:00:00+05:30"},"observed":[{"t":"2026-11-08T09:00:00+05:30","v":77.5},{"t":"2026-11-08T10:00:00+05:30","v":73.9},{"t":"2026-11-08T11:00:00+05:30","v":71.0},{"t":"2026-11-08T12:00:00+05:30","v":64.4},{"t":"2026-11-08T13:00:00+05:30","v":59.1},{"t":"2026-11-08T14:00:00+05:30","v":49.3},{"t":"2026-11-08T15:00:00+05:30","v":39.3},{"t":"2026-11-08T16:00:00+05:30","v":39.6},{"t":"2026-11-08T17:00:00+05:30","v":44.6},{"t":"2026-11-08T18:00:00+05:30","v":72.9},{"t":"2026-11-08T19:00:00+05:30","v":107.0},{"t":"2026-11-08T20:00:00+05:30","v":291.8},{"t":"2026-11-08T21:00:00+05:30","v":693.1},{"t":"2026-11-08T22:00:00+05:30","v":794.8},{"t":"2026-11-08T23:00:00+05:30","v":null},{"t":"2026-11-09T00:00:00+05:30","v":null},{"t":"2026-11-09T01:00:00+05:30","v":null},{"t":"2026-11-09T02:00:00+05:30","v":null},{"t":"2026-11-09T03:00:00+05:30","v":151.8},{"t":"2026-11-09T04:00:00+05:30","v":108.3},{"t":"2026-11-09T05:00:00+05:30","v":95.8},{"t":"2026-11-09T06:00:00+05:30","v":89.6},{"t":"2026-11-09T07:00:00+05:30","v":62.5},{"t":"2026-11-09T08:00:00+05:30","v":63.5},{"t":"2026-11-09T09:00:00+05:30","v":65.3},{"t":"2026-11-09T10:00:00+05:30","v":68.6},{"t":"2026-11-09T11:00:00+05:30","v":60.4},{"t":"2026-11-09T12:00:00+05:30","v":54.6},{"t":"2026-11-09T13:00:00+05:30","v":39.4},{"t":"2026-11-09T14:00:00+05:30","v":33.7},{"t":"2026-11-09T15:00:00+05:30","v":30.1},{"t":"2026-11-09T16:00:00+05:30","v":36.5},{"t":"2026-11-09T17:00:00+05:30","v":40.6},{"t":"2026-11-09T18:00:00+05:30","v":74.9},{"t":"2026-11-09T19:00:00+05:30","v":119.3},{"t":"2026-11-09T20:00:00+05:30","v":118.9},{"t":"2026-11-09T21:00:00+05:30","v":172.2},{"t":"2026-11-09T22:00:00+05:30","v":234.5},{"t":"2026-11-09T23:00:00+05:30","v":null},{"t":"2026-11-10T00:00:00+05:30","v":null},{"t":"2026-11-10T01:00:00+05:30","v":154.8},{"t":"2026-11-10T02:00:00+05:30","v":134.8},{"t":"2026-11-10T03:00:00+05:30","v":118.7},{"t":"2026-11-10T04:00:00+05:30","v":116.3},{"t":"2026-11-10T05:00:00+05:30","v":109.8},{"t":"2026-11-10T06:00:00+05:30","v":97.0},{"t":"2026-11-10T07:00:00+05:30","v":85.8},{"t":"2026-11-10T08:00:00+05:30","v":77.0}],"forecast":[{"t":"2026-11-10T09:00:00+05:30","v":68.8,"s":false},{"t":"2026-11-10T10:00:00+05:30","v":71.1,"s":false},{"t":"2026-11-10T11:00:00+05:30","v":65.4,"s":false},{"t":"2026-11-10T12:00:00+05:30","v":61.3,"s":false},{"t":"2026-11-10T13:00:00+05:30","v":50.7,"s":false},{"t":"2026-11-10T14:00:00+05:30","v":46.7,"s":false},{"t":"2026-11-10T15:00:00+05:30","v":44.2,"s":false},{"t":"2026-11-10T16:00:00+05:30","v":48.7,"s":false},{"t":"2026-11-10T17:00:00+05:30","v":51.5,"s":false},{"t":"2026-11-10T18:00:00+05:30","v":75.6,"s":false},{"t":"2026-11-10T19:00:00+05:30","v":106.6,"s":false},{"t":"2026-11-10T20:00:00+05:30","v":106.3,"s":false},{"t":"2026-11-10T21:00:00+05:30","v":143.6,"s":false},{"t":"2026-11-10T22:00:00+05:30","v":187.3,"s":false},{"t":"2026-11-10T23:00:00+05:30","v":66.1,"s":false},{"t":"2026-11-11T00:00:00+05:30","v":67.7,"s":true},{"t":"2026-11-11T01:00:00+05:30","v":115.9,"s":true},{"t":"2026-11-11T02:00:00+05:30","v":105.9,"s":true},{"t":"2026-11-11T03:00:00+05:30","v":97.9,"s":true},{"t":"2026-11-11T04:00:00+05:30","v":96.7,"s":true},{"t":"2026-11-11T05:00:00+05:30","v":93.4,"s":true},{"t":"2026-11-11T06:00:00+05:30","v":87.0,"s":true},{"t":"2026-11-11T07:00:00+05:30","v":81.4,"s":true},{"t":"2026-11-11T08:00:00+05:30","v":77.0,"s":true},{"t":"2026-11-11T09:00:00+05:30","v":71.2,"s":true},{"t":"2026-11-11T10:00:00+05:30","v":72.8,"s":true},{"t":"2026-11-11T11:00:00+05:30","v":68.7,"s":true},{"t":"2026-11-11T12:00:00+05:30","v":65.8,"s":true},{"t":"2026-11-11T13:00:00+05:30","v":58.2,"s":true},{"t":"2026-11-11T14:00:00+05:30","v":55.4,"s":true},{"t":"2026-11-11T15:00:00+05:30","v":53.6,"s":true},{"t":"2026-11-11T16:00:00+05:30","v":56.8,"s":true},{"t":"2026-11-11T17:00:00+05:30","v":58.8,"s":true},{"t":"2026-11-11T18:00:00+05:30","v":76.0,"s":true},{"t":"2026-11-11T19:00:00+05:30","v":98.2,"s":true},{"t":"2026-11-11T20:00:00+05:30","v":98.0,"s":true},{"t":"2026-11-11T21:00:00+05:30","v":124.6,"s":true},{"t":"2026-11-11T22:00:00+05:30","v":155.8,"s":true},{"t":"2026-11-11T23:00:00+05:30","v":66.1,"s":true},{"t":"2026-11-12T00:00:00+05:30","v":67.7,"s":true},{"t":"2026-11-12T01:00:00+05:30","v":115.9,"s":true},{"t":"2026-11-12T02:00:00+05:30","v":105.9,"s":true},{"t":"2026-11-12T03:00:00+05:30","v":97.9,"s":true},{"t":"2026-11-12T04:00:00+05:30","v":96.7,"s":true},{"t":"2026-11-12T05:00:00+05:30","v":93.4,"s":true},{"t":"2026-11-12T06:00:00+05:30","v":87.0,"s":true},{"t":"2026-11-12T07:00:00+05:30","v":81.4,"s":true},{"t":"2026-11-12T08:00:00+05:30","v":77.0,"s":true},{"t":"2026-11-12T09:00:00+05:30","v":71.2,"s":true},{"t":"2026-11-12T10:00:00+05:30","v":72.8,"s":true},{"t":"2026-11-12T11:00:00+05:30","v":68.7,"s":true},{"t":"2026-11-12T12:00:00+05:30","v":65.8,"s":true},{"t":"2026-11-12T13:00:00+05:30","v":58.2,"s":true},{"t":"2026-11-12T14:00:00+05:30","v":55.4,"s":true},{"t":"2026-11-12T15:00:00+05:30","v":53.6,"s":true},{"t":"2026-11-12T16:00:00+05:30","v":56.8,"s":true},{"t":"2026-11-12T17:00:00+05:30","v":58.8,"s":true},{"t":"2026-11-12T18:00:00+05:30","v":76.0,"s":true},{"t":"2026-11-12T19:00:00+05:30","v":98.2,"s":true},{"t":"2026-11-12T20:00:00+05:30","v":98.0,"s":true},{"t":"2026-11-12T21:00:00+05:30","v":124.6,"s":true},{"t":"2026-11-12T22:00:00+05:30","v":155.8,"s":true},{"t":"2026-11-12T23:00:00+05:30","v":66.1,"s":true}],"days":{"2026-11-11":{"avg":83.5,"peak":{"value":155.8,"hour":"10 PM"},"best":{"value":53.6,"hour":"3 PM"},"bestWindow":{"startHour":"2 PM","endHour":"5 PM","avg":55.2},"worstWindow":{"startHour":"8 PM","endHour":"11 PM","avg":126.1}},"2026-11-12":{"avg":83.5,"peak":{"value":155.8,"hour":"10 PM"},"best":{"value":53.6,"hour":"3 PM"},"bestWindow":{"startHour":"2 PM","endHour":"5 PM","avg":55.2},"worstWindow":{"startHour":"8 PM","endHour":"11 PM","avg":126.1}}}},{"id":11606,"name":"Borivali East","fullName":"Borivali East, Mumbai - IITM","lat":19.23241,"lon":72.86895,"now":{"value":50.4,"t":"2026-11-10T08:00:00+05:30"},"observed":[{"t":"2026-11-08T09:00:00+05:30","v":52.9},{"t":"2026-11-08T10:00:00+05:30","v":47.7},{"t":"2026-11-08T11:00:00+05:30","v":46.0},{"t":"2026-11-08T12:00:00+05:30","v":44.8},{"t":"2026-11-08T13:00:00+05:30","v":42.5},{"t":"2026-11-08T14:00:00+05:30","v":35.7},{"t":"2026-11-08T15:00:00+05:30","v":32.5},{"t":"2026-11-08T16:00:00+05:30","v":28.6},{"t":"2026-11-08T17:00:00+05:30","v":28.8},{"t":"2026-11-08T18:00:00+05:30","v":37.8},{"t":"2026-11-08T19:00:00+05:30","v":66.1},{"t":"2026-11-08T20:00:00+05:30","v":118.5},{"t":"2026-11-08T21:00:00+05:30","v":227.3},{"t":"2026-11-08T22:00:00+05:30","v":302.5},{"t":"2026-11-08T23:00:00+05:30","v":null},{"t":"2026-11-09T00:00:00+05:30","v":null},{"t":"2026-11-09T01:00:00+05:30","v":52.3},{"t":"2026-11-09T02:00:00+05:30","v":44.8},{"t":"2026-11-09T03:00:00+05:30","v":49.0},{"t":"2026-11-09T04:00:00+05:30","v":37.7},{"t":"2026-11-09T05:00:00+05:30","v":21.4},{"t":"2026-11-09T06:00:00+05:30","v":26.0},{"t":"2026-11-09T07:00:00+05:30","v":51.6},{"t":"2026-11-09T08:00:00+05:30","v":63.6},{"t":"2026-11-09T09:00:00+05:30","v":53.6},{"t":"2026-11-09T10:00:00+05:30","v":38.0},{"t":"2026-11-09T11:00:00+05:30","v":36.7},{"t":"2026-11-09T12:00:00+05:30","v":52.0},{"t":"2026-11-09T13:00:00+05:30","v":47.7},{"t":"2026-11-09T14:00:00+05:30","v":39.1},{"t":"2026-11-09T15:00:00+05:30","v":32.6},{"t":"2026-11-09T16:00:00+05:30","v":22.4},{"t":"2026-11-09T17:00:00+05:30","v":21.2},{"t":"2026-11-09T18:00:00+05:30","v":32.1},{"t":"2026-11-09T19:00:00+05:30","v":55.4},{"t":"2026-11-09T20:00:00+05:30","v":88.0},{"t":"2026-11-09T21:00:00+05:30","v":118.4},{"t":"2026-11-09T22:00:00+05:30","v":126.5},{"t":"2026-11-09T23:00:00+05:30","v":null},{"t":"2026-11-10T00:00:00+05:30","v":null},{"t":"2026-11-10T01:00:00+05:30","v":81.3},{"t":"2026-11-10T02:00:00+05:30","v":71.5},{"t":"2026-11-10T03:00:00+05:30","v":60.0},{"t":"2026-11-10T04:00:00+05:30","v":45.9},{"t":"2026-11-10T05:00:00+05:30","v":40.1},{"t":"2026-11-10T06:00:00+05:30","v":42.8},{"t":"2026-11-10T07:00:00+05:30","v":45.1},{"t":"2026-11-10T08:00:00+05:30","v":50.4}],"forecast":[{"t":"2026-11-10T09:00:00+05:30","v":52.7,"s":false},{"t":"2026-11-10T10:00:00+05:30","v":41.7,"s":false},{"t":"2026-11-10T11:00:00+05:30","v":40.8,"s":false},{"t":"2026-11-10T12:00:00+05:30","v":51.5,"s":false},{"t":"2026-11-10T13:00:00+05:30","v":48.5,"s":false},{"t":"2026-11-10T14:00:00+05:30","v":42.5,"s":false},{"t":"2026-11-10T15:00:00+05:30","v":37.9,"s":false},{"t":"2026-11-10T16:00:00+05:30","v":30.8,"s":false},{"t":"2026-11-10T17:00:00+05:30","v":30.0,"s":false},{"t":"2026-11-10T18:00:00+05:30","v":37.6,"s":false},{"t":"2026-11-10T19:00:00+05:30","v":53.9,"s":false},{"t":"2026-11-10T20:00:00+05:30","v":76.7,"s":false},{"t":"2026-11-10T21:00:00+05:30","v":98.0,"s":false},{"t":"2026-11-10T22:00:00+05:30","v":103.7,"s":false},{"t":"2026-11-10T23:00:00+05:30","v":63.5,"s":false},{"t":"2026-11-11T00:00:00+05:30","v":59.0,"s":true},{"t":"2026-11-11T01:00:00+05:30","v":65.8,"s":true},{"t":"2026-11-11T02:00:00+05:30","v":60.9,"s":true},{"t":"2026-11-11T03:00:00+05:30","v":55.2,"s":true},{"t":"2026-11-11T04:00:00+05:30","v":48.1,"s":true},{"t":"2026-11-11T05:00:00+05:30","v":45.3,"s":true},{"t":"2026-11-11T06:00:00+05:30","v":46.6,"s":true},{"t":"2026-11-11T07:00:00+05:30","v":47.8,"s":true},{"t":"2026-11-11T08:00:00+05:30","v":50.4,"s":true},{"t":"2026-11-11T09:00:00+05:30","v":52.0,"s":true},{"t":"2026-11-11T10:00:00+05:30","v":44.2,"s":true},{"t":"2026-11-11T11:00:00+05:30","v":43.6,"s":true},{"t":"2026-11-11T12:00:00+05:30","v":51.2,"s":true},{"t":"2026-11-11T13:00:00+05:30","v":49.1,"s":true},{"t":"2026-11-11T14:00:00+05:30","v":44.8,"s":true},{"t":"2026-11-11T15:00:00+05:30","v":41.5,"s":true},{"t":"2026-11-11T16:00:00+05:30","v":36.4,"s":true},{"t":"2026-11-11T17:00:00+05:30","v":35.8,"s":true},{"t":"2026-11-11T18:00:00+05:30","v":41.2,"s":true},{"t":"2026-11-11T19:00:00+05:30","v":52.9,"s":true},{"t":"2026-11-11T20:00:00+05:30","v":69.2,"s":true},{"t":"2026-11-11T21:00:00+05:30","v":84.4,"s":true},{"t":"2026-11-11T22:00:00+05:30","v":88.5,"s":true},{"t":"2026-11-11T23:00:00+05:30","v":63.5,"s":true},{"t":"2026-11-12T00:00:00+05:30","v":59.0,"s":true},{"t":"2026-11-12T01:00:00+05:30","v":65.8,"s":true},{"t":"2026-11-12T02:00:00+05:30","v":60.9,"s":true},{"t":"2026-11-12T03:00:00+05:30","v":55.2,"s":true},{"t":"2026-11-12T04:00:00+05:30","v":48.1,"s":true},{"t":"2026-11-12T05:00:00+05:30","v":45.3,"s":true},{"t":"2026-11-12T06:00:00+05:30","v":46.6,"s":true},{"t":"2026-11-12T07:00:00+05:30","v":47.8,"s":true},{"t":"2026-11-12T08:00:00+05:30","v":50.4,"s":true},{"t":"2026-11-12T09:00:00+05:30","v":52.0,"s":true},{"t":"2026-11-12T10:00:00+05:30","v":44.2,"s":true},{"t":"2026-11-12T11:00:00+05:30","v":43.6,"s":true},{"t":"2026-11-12T12:00:00+05:30","v":51.2,"s":true},{"t":"2026-11-12T13:00:00+05:30","v":49.1,"s":true},{"t":"2026-11-12T14:00:00+05:30","v":44.8,"s":true},{"t":"2026-11-12T15:00:00+05:30","v":41.5,"s":true},{"t":"2026-11-12T16:00:00+05:30","v":36.4,"s":true},{"t":"2026-11-12T17:00:00+05:30","v":35.8,"s":true},{"t":"2026-11-12T18:00:00+05:30","v":41.2,"s":true},{"t":"2026-11-12T19:00:00+05:30","v":52.9,"s":true},{"t":"2026-11-12T20:00:00+05:30","v":69.2,"s":true},{"t":"2026-11-12T21:00:00+05:30","v":84.4,"s":true},{"t":"2026-11-12T22:00:00+05:30","v":88.5,"s":true},{"t":"2026-11-12T23:00:00+05:30","v":63.5,"s":true}],"days":{"2026-11-11":{"avg":53.2,"peak":{"value":88.5,"hour":"10 PM"},"best":{"value":35.8,"hour":"5 PM"},"bestWindow":{"startHour":"4 PM","endHour":"7 PM","avg":37.8},"worstWindow":{"startHour":"8 PM","endHour":"11 PM","avg":80.7}},"2026-11-12":{"avg":53.2,"peak":{"value":88.5,"hour":"10 PM"},"best":{"value":35.8,"hour":"5 PM"},"bestWindow":{"startHour":"4 PM","endHour":"7 PM","avg":37.8},"worstWindow":{"startHour":"8 PM","endHour":"11 PM","avg":80.7}}}},{"id":3409510,"name":"Byculla","fullName":"Byculla, Mumbai - BMC","lat":18.9767,"lon":72.838,"now":{"value":43.8,"t":"2026-11-10T08:00:00+05:30"},"observed":[{"t":"2026-11-08T09:00:00+05:30","v":83.5},{"t":"2026-11-08T10:00:00+05:30","v":74.7},{"t":"2026-11-08T11:00:00+05:30","v":70.8},{"t":"2026-11-08T12:00:00+05:30","v":66.5},{"t":"2026-11-08T13:00:00+05:30","v":59.1},{"t":"2026-11-08T14:00:00+05:30","v":47.8},{"t":"2026-11-08T15:00:00+05:30","v":40.0},{"t":"2026-11-08T16:00:00+05:30","v":36.3},{"t":"2026-11-08T17:00:00+05:30","v":40.5},{"t":"2026-11-08T18:00:00+05:30","v":48.0},{"t":"2026-11-08T19:00:00+05:30","v":40.0},{"t":"2026-11-08T20:00:00+05:30","v":50.1},{"t":"2026-11-08T21:00:00+05:30","v":82.8},{"t":"2026-11-08T22:00:00+05:30","v":318.4},{"t":"2026-11-08T23:00:00+05:30","v":null},{"t":"2026-11-09T00:00:00+05:30","v":null},{"t":"2026-11-09T01:00:00+05:30","v":351.3},{"t":"2026-11-09T02:00:00+05:30","v":null},{"t":"2026-11-09T03:00:00+05:30","v":null},{"t":"2026-11-09T04:00:00+05:30","v":110.8},{"t":"2026-11-09T05:00:00+05:30","v":null},{"t":"2026-11-09T06:00:00+05:30","v":null},{"t":"2026-11-09T07:00:00+05:30","v":66.7},{"t":"2026-11-09T08:00:00+05:30","v":59.9},{"t":"2026-11-09T09:00:00+05:30","v":52.2},{"t":"2026-11-09T10:00:00+05:30","v":48.5},{"t":"2026-11-09T11:00:00+05:30","v":54.9},{"t":"2026-11-09T12:00:00+05:30","v":48.4},{"t":"2026-11-09T13:00:00+05:30","v":38.7},{"t":"2026-11-09T14:00:00+05:30","v":27.8},{"t":"2026-11-09T15:00:00+05:30","v":19.4},{"t":"2026-11-09T16:00:00+05:30","v":9.1},{"t":"2026-11-09T17:00:00+05:30","v":15.0},{"t":"2026-11-09T18:00:00+05:30","v":8.9},{"t":"2026-11-09T19:00:00+05:30","v":15.6},{"t":"2026-11-09T20:00:00+05:30","v":5.7},{"t":"2026-11-09T21:00:00+05:30","v":18.3},{"t":"2026-11-09T22:00:00+05:30","v":41.7},{"t":"2026-11-09T23:00:00+05:30","v":null},{"t":"2026-11-10T00:00:00+05:30","v":null},{"t":"2026-11-10T01:00:00+05:30","v":51.4},{"t":"2026-11-10T02:00:00+05:30","v":56.2},{"t":"2026-11-10T03:00:00+05:30","v":67.7},{"t":"2026-11-10T04:00:00+05:30","v":72.9},{"t":"2026-11-10T05:00:00+05:30","v":65.9},{"t":"2026-11-10T06:00:00+05:30","v":64.8},{"t":"2026-11-10T07:00:00+05:30","v":51.2},{"t":"2026-11-10T08:00:00+05:30","v":43.8}],"forecast":[{"t":"2026-11-10T09:00:00+05:30","v":49.7,"s":false},{"t":"2026-11-10T10:00:00+05:30","v":47.1,"s":false},{"t":"2026-11-10T11:00:00+05:30","v":51.6,"s":false},{"t":"2026-11-10T12:00:00+05:30","v":47.0,"s":false},{"t":"2026-11-10T13:00:00+05:30","v":40.2,"s":false},{"t":"2026-11-10T14:00:00+05:30","v":32.6,"s":false},{"t":"2026-11-10T15:00:00+05:30","v":26.7,"s":false},{"t":"2026-11-10T16:00:00+05:30","v":19.5,"s":false},{"t":"2026-11-10T17:00:00+05:30","v":23.6,"s":false},{"t":"2026-11-10T18:00:00+05:30","v":19.4,"s":false},{"t":"2026-11-10T19:00:00+05:30","v":24.1,"s":false},{"t":"2026-11-10T20:00:00+05:30","v":17.1,"s":false},{"t":"2026-11-10T21:00:00+05:30","v":26.0,"s":false},{"t":"2026-11-10T22:00:00+05:30","v":42.3,"s":false},{"t":"2026-11-10T23:00:00+05:30","v":49.6,"s":false},{"t":"2026-11-11T00:00:00+05:30","v":50.7,"s":true},{"t":"2026-11-11T01:00:00+05:30","v":47.6,"s":true},{"t":"2026-11-11T02:00:00+05:30","v":50.0,"s":true},{"t":"2026-11-11T03:00:00+05:30","v":55.8,"s":true},{"t":"2026-11-11T04:00:00+05:30","v":58.4,"s":true},{"t":"2026-11-11T05:00:00+05:30","v":54.8,"s":true},{"t":"2026-11-11T06:00:00+05:30","v":54.3,"s":true},{"t":"2026-11-11T07:00:00+05:30","v":47.5,"s":true},{"t":"2026-11-11T08:00:00+05:30","v":43.8,"s":true},{"t":"2026-11-11T09:00:00+05:30","v":48.0,"s":true},{"t":"2026-11-11T10:00:00+05:30","v":46.1,"s":true},{"t":"2026-11-11T11:00:00+05:30","v":49.3,"s":true},{"t":"2026-11-11T12:00:00+05:30","v":46.1,"s":true},{"t":"2026-11-11T13:00:00+05:30","v":41.2,"s":true},{"t":"2026-11-11T14:00:00+05:30","v":35.8,"s":true},{"t":"2026-11-11T15:00:00+05:30","v":31.6,"s":true},{"t":"2026-11-11T16:00:00+05:30","v":26.5,"s":true},{"t":"2026-11-11T17:00:00+05:30","v":29.4,"s":true},{"t":"2026-11-11T18:00:00+05:30","v":26.4,"s":true},{"t":"2026-11-11T19:00:00+05:30","v":29.7,"s":true},{"t":"2026-11-11T20:00:00+05:30","v":24.8,"s":true},{"t":"2026-11-11T21:00:00+05:30","v":31.1,"s":true},{"t":"2026-11-11T22:00:00+05:30","v":42.7,"s":true},{"t":"2026-11-11T23:00:00+05:30","v":49.6,"s":true},{"t":"2026-11-12T00:00:00+05:30","v":50.7,"s":true},{"t":"2026-11-12T01:00:00+05:30","v":47.6,"s":true},{"t":"2026-11-12T02:00:00+05:30","v":50.0,"s":true},{"t":"2026-11-12T03:00:00+05:30","v":55.8,"s":true},{"t":"2026-11-12T04:00:00+05:30","v":58.4,"s":true},{"t":"2026-11-12T05:00:00+05:30","v":54.8,"s":true},{"t":"2026-11-12T06:00:00+05:30","v":54.3,"s":true},{"t":"2026-11-12T07:00:00+05:30","v":47.5,"s":true},{"t":"2026-11-12T08:00:00+05:30","v":43.8,"s":true},{"t":"2026-11-12T09:00:00+05:30","v":48.0,"s":true},{"t":"2026-11-12T10:00:00+05:30","v":46.1,"s":true},{"t":"2026-11-12T11:00:00+05:30","v":49.3,"s":true},{"t":"2026-11-12T12:00:00+05:30","v":46.1,"s":true},{"t":"2026-11-12T13:00:00+05:30","v":41.2,"s":true},{"t":"2026-11-12T14:00:00+05:30","v":35.8,"s":true},{"t":"2026-11-12T15:00:00+05:30","v":31.6,"s":true},{"t":"2026-11-12T16:00:00+05:30","v":26.5,"s":true},{"t":"2026-11-12T17:00:00+05:30","v":29.4,"s":true},{"t":"2026-11-12T18:00:00+05:30","v":26.4,"s":true},{"t":"2026-11-12T19:00:00+05:30","v":29.7,"s":true},{"t":"2026-11-12T20:00:00+05:30","v":24.8,"s":true},{"t":"2026-11-12T21:00:00+05:30","v":31.1,"s":true},{"t":"2026-11-12T22:00:00+05:30","v":42.7,"s":true},{"t":"2026-11-12T23:00:00+05:30","v":49.6,"s":true}],"days":{"2026-11-11":{"avg":42.5,"peak":{"value":58.4,"hour":"4 AM"},"best":{"value":24.8,"hour":"8 PM"},"bestWindow":{"startHour":"6 PM","endHour":"9 PM","avg":26.9},"worstWindow":{"startHour":"3 AM","endHour":"6 AM","avg":56.3}},"2026-11-12":{"avg":42.5,"peak":{"value":58.4,"hour":"4 AM"},"best":{"value":24.8,"hour":"8 PM"},"bestWindow":{"startHour":"6 PM","endHour":"9 PM","avg":26.9},"worstWindow":{"startHour":"3 AM","endHour":"6 AM","avg":56.3}}}}]}/*DATA_END*/;
+const REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------------- categories (CPCB PM2.5 bands) ---------------- */
+const CATS = [
+  {max:30,  name:"Good",         color:"#1e9e4a", advice:"Breathe easy — great air for any outdoor plan."},
+  {max:60,  name:"Satisfactory", color:"#69a92c", advice:"Fine for almost everyone."},
+  {max:90,  name:"Moderate",     color:"#d9930d", advice:"Okay for most people; sensitive groups, take it easy."},
+  {max:120, name:"Poor",         color:"#e86a17", advice:"Sensitive groups should limit time outside."},
+  {max:250, name:"Very Poor",    color:"#dd3a2d", advice:"Limit time outside; a mask helps."},
+  {max:1e9, name:"Severe",       color:"#8e1e3f", advice:"Stay indoors if you can; mask up outside."}
+];
+const catOf = v => CATS.find(c => Math.round(v) <= c.max);
+function rgba(hex, a){
+  const n = parseInt(hex.slice(1), 16);
+  return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;
+}
+
+/* ---------------- time helpers (labels always IST, from ISO parts) ---------------- */
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const DAYS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+function parts(iso){
+  const [d, t] = iso.split("T");
+  const [y, m, dd] = d.split("-").map(Number);
+  const h = Number(t.slice(0, 2));
+  return {y, m, dd, h, dow: new Date(Date.UTC(y, m - 1, dd)).getUTCDay(), date: d};
+}
+function hourLabel(h){
+  if (h === 0) return "12 AM";
+  if (h === 12) return "12 PM";
+  return h < 12 ? h + " AM" : (h - 12) + " PM";
+}
+const ms = iso => Date.parse(iso);
+
+/* ---------------- state ---------------- */
+let selectedId = DATA.stations.reduce((a, b) => (b.now.value > a.now.value ? b : a)).id;
+const stationById = id => DATA.stations.find(s => s.id === id);
+
+/* ---------------- count-up numbers ---------------- */
+function countUp(el, to, suffix){
+  const from = parseFloat(el.dataset.v || "0");
+  if (REDUCED){ el.textContent = Math.round(to); el.dataset.v = to; return; }
+  const t0 = performance.now(), dur = 650;
+  (function tick(t){
+    const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(from + (to - from) * e);
+    if (p < 1) requestAnimationFrame(tick); else el.dataset.v = to;
+  })(t0);
+}
+
+/* ---------------- hero ---------------- */
+(function hero(){
+  const cityCat = catOf(DATA.city.now);
+  document.documentElement.style.setProperty("--blob1", rgba(cityCat.color, .85));
+  countUp(document.getElementById("cityNow"), DATA.city.now);
+  const chip = document.getElementById("cityChip");
+  chip.style.background = cityCat.color;
+  chip.querySelector("span").textContent = cityCat.name + " air";
+  document.getElementById("citySummary").textContent = DATA.city.summary;
+  const e = parts(DATA.stations[0].now.t);
+  const endH = (e.h + 1) % 24;
+  document.getElementById("cityMeta").textContent =
+    `From readings at ${DATA.stations.length} stations across Mumbai · updated ${DAYS[e.dow]} ${e.dd} ${MONTHS[e.m - 1]}, ${hourLabel(endH)} IST`;
+  const sorted = [...DATA.stations].sort((a, b) => a.now.value - b.now.value);
+  document.getElementById("cleanNow").textContent = `${sorted[0].name} (${Math.round(sorted[0].now.value)})`;
+  document.getElementById("dirtyNow").textContent = `${sorted[3].name} (${Math.round(sorted[3].now.value)})`;
+})();
+
+/* ---------------- map ---------------- */
+const PROJ = {lon0: 72.76, lon1: 73.00, lat0: 19.32, lat1: 18.88, x0: 26, x1: 314, y0: 24, y1: 396};
+const px = lon => PROJ.x0 + (lon - PROJ.lon0) / (PROJ.lon1 - PROJ.lon0) * (PROJ.x1 - PROJ.x0);
+const py = lat => PROJ.y0 + (PROJ.lat0 - lat) / (PROJ.lat0 - PROJ.lat1) * (PROJ.y1 - PROJ.y0);
+const LABEL_SIDE = {11611: "end", 11606: "start", 3409511: "end", 3409510: "start"};
+
+(function buildMap(){
+  const dots = DATA.stations.map(s => {
+    const c = catOf(s.now.value), x = px(s.lon), y = py(s.lat), side = LABEL_SIDE[s.id];
+    const tx = side === "end" ? x - 17 : x + 17;
+    return `<g class="station-dot" data-id="${s.id}" role="button" aria-label="${s.name}">
+      <circle class="pulse" cx="${x}" cy="${y}" r="12" fill="${c.color}"></circle>
+      <circle class="ring" cx="${x}" cy="${y}" r="17" fill="none" stroke="${c.color}" stroke-width="1.6" opacity="0"></circle>
+      <circle class="core" cx="${x}" cy="${y}" r="9" fill="${c.color}" stroke="#fff" stroke-width="2.6"></circle>
+      <text x="${tx}" y="${y - 1}" text-anchor="${side}" font-size="12.5" font-weight="700" fill="#1c1c1e"
+        style="paint-order:stroke;stroke:rgba(255,255,255,.9);stroke-width:3.5px">${s.name}</text>
+      <text x="${tx}" y="${y + 13}" text-anchor="${side}" font-size="10.5" font-weight="700" fill="${c.color}"
+        style="paint-order:stroke;stroke:rgba(255,255,255,.9);stroke-width:3.5px">${Math.round(s.now.value)} · ${c.name}</text>
+    </g>`;
+  }).join("");
+  document.getElementById("mapbox").innerHTML = `
+  <svg viewBox="0 0 340 420" role="img" aria-label="Stylised map of Mumbai with four air quality stations">
+    <defs>
+      <linearGradient id="sea" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#e8f3ff"/><stop offset="1" stop-color="#f6fbff"/>
+      </linearGradient>
+      <linearGradient id="land" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#fdfefb"/><stop offset="1" stop-color="#edf3e9"/>
+      </linearGradient>
+    </defs>
+    <rect x="0" y="0" width="340" height="420" rx="18" fill="url(#sea)"/>
+    <path d="M322 96 C338 170 338 268 326 344 L340 344 L340 96 Z" fill="url(#land)" opacity=".55"/>
+    <path style="filter:drop-shadow(0 8px 14px rgba(60,90,60,.20))"
+      d="M120 18 C190 4 268 26 292 84 C306 118 288 150 268 168 C292 200 286 262 252 296
+         C232 318 208 330 188 336 C172 356 168 384 150 408 C138 417 122 414 112 398
+         C100 372 100 344 106 322 C84 300 66 268 60 226 C52 180 62 128 84 92 C96 52 104 30 120 18 Z"
+      fill="url(#land)" stroke="rgba(90,120,90,.28)" stroke-width="1.4"/>
+    <text x="30" y="212" font-size="10" letter-spacing="3.5" fill="#7aa7c7" opacity=".75"
+      transform="rotate(-90 30 212)" text-anchor="middle" font-weight="600">ARABIAN SEA</text>
+    <text x="306" y="212" font-size="9" letter-spacing="2.5" fill="#9db98a" opacity=".8"
+      transform="rotate(90 306 212)" text-anchor="middle" font-weight="600">THANE CREEK</text>
+    ${dots}
+  </svg>`;
+  document.querySelectorAll(".station-dot").forEach(g =>
+    g.addEventListener("click", () => selectStation(Number(g.dataset.id), true)));
+})();
+
+function refreshMapSelection(){
+  document.querySelectorAll(".station-dot").forEach(g => {
+    const on = Number(g.dataset.id) === selectedId;
+    g.querySelector(".ring").setAttribute("opacity", on ? ".9" : "0");
+    g.querySelector(".core").setAttribute("r", on ? "11.5" : "9");
+    g.querySelector(".pulse").style.animationPlayState = on ? "running" : "paused";
+    g.querySelector(".pulse").style.opacity = on ? "" : "0";
+  });
+}
+
+/* ---------------- station cards ---------------- */
+(function buildCards(){
+  const el = document.getElementById("scroller");
+  el.innerHTML = DATA.stations.map(s => {
+    const c = catOf(s.now.value), d = s.days[DATA.forecastDates.tomorrow];
+    return `<button class="scard" data-id="${s.id}" role="tab" aria-selected="false"
+      style="background:linear-gradient(160deg, ${rgba(c.color, .20)}, rgba(255,255,255,.55) 78%)">
+      <div class="nm">${s.name}</div>
+      <div class="val">${Math.round(s.now.value)}<small> µg/m³</small></div>
+      <span class="chip soft" style="background:${rgba(c.color, .18)};color:${c.color}"><i></i>${c.name}</span>
+      <div class="tmr">Tomorrow<br>peaks <b>${Math.round(d.peak.value)}</b> at <b>${d.peak.hour}</b><br>best <b>${Math.round(d.best.value)}</b> at <b>${d.best.hour}</b></div>
+    </button>`;
+  }).join("");
+  el.querySelectorAll(".scard").forEach(b =>
+    b.addEventListener("click", () => selectStation(Number(b.dataset.id), true)));
+})();
+
+function refreshCardSelection(){
+  document.querySelectorAll(".scard").forEach(b => {
+    const on = Number(b.dataset.id) === selectedId;
+    b.classList.toggle("sel", on);
+    b.setAttribute("aria-selected", on);
+    if (on) b.style.boxShadow = `0 12px 28px rgba(50,60,120,.14), 0 0 0 2px ${catOf(stationById(selectedId).now.value).color}`;
+    else b.style.boxShadow = "";
+  });
+}
+
+/* ---------------- chart ---------------- */
+const chartbox = document.getElementById("chartbox");
+const tooltip = document.getElementById("tooltip");
+let chart = null;   // geometry cache for scrubbing
+let revealAnim = null;
+
+function smoothPath(p){
+  if (p.length < 2) return p.length ? `M ${p[0][0]} ${p[0][1]}` : "";
+  if (p.length === 2) return `M ${p[0][0]} ${p[0][1]} L ${p[1][0]} ${p[1][1]}`;
+  let d = `M ${p[0][0].toFixed(1)} ${p[0][1].toFixed(1)}`;
+  for (let i = 0; i < p.length - 1; i++){
+    const p0 = p[Math.max(0, i - 1)], p1 = p[i], p2 = p[i + 1], p3 = p[Math.min(p.length - 1, i + 2)];
+    d += ` C ${(p1[0] + (p2[0] - p0[0]) / 6).toFixed(1)} ${(p1[1] + (p2[1] - p0[1]) / 6).toFixed(1)},`
+       + ` ${(p2[0] - (p3[0] - p1[0]) / 6).toFixed(1)} ${(p2[1] - (p3[1] - p1[1]) / 6).toFixed(1)}, ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
+  }
+  return d;
+}
+function runsOf(arr){
+  const runs = []; let cur = [];
+  arr.forEach((v, i) => {
+    if (v == null){ if (cur.length) runs.push(cur); cur = []; }
+    else cur.push(i);
+  });
+  if (cur.length) runs.push(cur);
+  return runs;
+}
+
+function renderChart(animate){
+  const st = stationById(selectedId);
+  const W = Math.max(300, chartbox.clientWidth), H = 216;
+  const padL = 32, padR = 10, padT = 16, padB = 24;
+  const iw = W - padL - padR, ih = H - padT - padB;
+
+  const t0 = ms(st.observed[0].t);
+  /* IST wall-clock label for the i-th hour slot (read UTC fields of t+5:30) */
+  const isoAt = i => new Date(t0 + i * 3600000 + 19800000).toISOString();
+  const N = Math.round((ms(st.forecast[st.forecast.length - 1].t) - t0) / 3600000) + 1;
+  const obs = new Array(N).fill(null), fc = new Array(N).fill(null);
+  st.observed.forEach(o => { obs[Math.round((ms(o.t) - t0) / 3600000)] = o.v; });
+  st.forecast.forEach(f => { fc[Math.round((ms(f.t) - t0) / 3600000)] = f.v; });
+  const lastObs = obs.reduce((a, v, i) => (v != null ? i : a), 0);
+
+  let maxV = 0;
+  obs.concat(fc).forEach(v => { if (v != null && v > maxV) maxV = v; });
+  /* cap the axis so a single sensor spike cannot flatten the whole story */
+  const niceMax = Math.max(120, Math.ceil(Math.min(maxV, 300) / 60) * 60);
+  const X = i => padL + (i / (N - 1)) * iw;
+  const Y = v => padT + ih - (Math.min(v, niceMax) / niceMax) * ih;
+
+  /* gradient stops that follow the forecast's own category colours */
+  const fcIdx = fc.map((v, i) => (v != null ? i : -1)).filter(i => i >= 0);
+  const stops = fcIdx.map(i => {
+    const off = (i / (N - 1) * 100).toFixed(1);
+    return `<stop offset="${off}%" stop-color="${catOf(fc[i]).color}"/>`;
+  }).join("");
+  const stopsA = fcIdx.map(i => {
+    const off = (i / (N - 1) * 100).toFixed(1);
+    return `<stop offset="${off}%" stop-color="${catOf(fc[i]).color}" stop-opacity=".16"/>`;
+  }).join("");
+
+  let grid = "", labels = "";
+  for (let g = 0; g <= 3; g++){
+    const v = niceMax * g / 3, y = Y(v);
+    grid += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="rgba(60,60,67,.09)" stroke-width="1"/>`;
+    labels += `<text x="${padL - 6}" y="${y + 3.5}" text-anchor="end" font-size="9.5" fill="#8e8e93" font-weight="600">${Math.round(v)}</text>`;
+  }
+  /* day boundaries + axis labels */
+  let days = "", nowLine = "";
+  for (let i = 0; i < N; i++){
+    const p = parts(isoAt(i));
+    if (p.h === 0){
+      const dayName = p.date === DATA.forecastDates.tomorrow ? "Tomorrow"
+        : i <= lastObs && p.date === parts(st.now.t).date ? "Today"
+        : `${DAYS[p.dow]} ${p.dd}`;
+      days += `<line x1="${X(i)}" y1="${padT}" x2="${X(i)}" y2="${padT + ih}" stroke="rgba(60,60,67,.10)"/>`
+            + `<text x="${X(i) + 4}" y="${H - 8}" font-size="10" fill="#636366" font-weight="600">${dayName}</text>`;
+    }
+  }
+  const p0 = parts(st.observed[0].t);
+  days += `<text x="${padL}" y="${H - 8}" font-size="10" fill="#636366" font-weight="600">${DAYS[p0.dow]} ${p0.dd} ${MONTHS[p0.m - 1]}</text>`;
+  nowLine = `<line x1="${X(lastObs)}" y1="${padT - 4}" x2="${X(lastObs)}" y2="${padT + ih}" stroke="rgba(60,60,67,.35)" stroke-dasharray="3 3"/>`
+          + `<text x="${X(lastObs)}" y="${padT - 7}" text-anchor="middle" font-size="9.5" fill="#636366" font-weight="700">NOW</text>`;
+
+  const base = padT + ih;
+  let obsPaths = "", fcPaths = "", obsArea = "", fcArea = "";
+  runsOf(obs).forEach(run => {
+    if (run.length === 1){ obsPaths += `<circle cx="${X(run[0])}" cy="${Y(obs[run[0]])}" r="2.4" fill="#3a3a3c"/>`; return; }
+    const pts = run.map(i => [X(i), Y(obs[i])]);
+    obsPaths += `<path d="${smoothPath(pts)}" fill="none" stroke="#3a3a3c" stroke-width="2.6" stroke-linecap="round"/>`;
+    obsArea += `<path d="${smoothPath(pts)} L ${X(run[run.length - 1])} ${base} L ${X(run[0])} ${base} Z" fill="url(#obsFill)" stroke="none"/>`;
+  });
+  runsOf(fc).forEach(run => {
+    /* bridge the visual gap from the last measured point */
+    const start = (run[0] > 0 && obs[run[0] - 1] != null) ? [run[0] - 1] : [];
+    const idxs = start.concat(run);
+    const pts = idxs.map(i => [X(i), Y(i === run[0] - 1 && start.length ? obs[i] : fc[i])]);
+    fcPaths += `<path d="${smoothPath(pts)}" fill="none" stroke="url(#fcStroke)" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 5"/>`;
+    const areaPts = run.map(i => [X(i), Y(fc[i])]);
+    if (start.length) areaPts.unshift([X(run[0] - 1), Y(obs[run[0] - 1])]);
+    fcArea += `<path d="${smoothPath(areaPts)} L ${X(run[run.length - 1])} ${base} L ${X(idxs[0])} ${base} Z" fill="url(#fcFill)" stroke="none"/>`;
+  });
+
+  const scoredIdx = st.forecast.filter(f => f.s)
+    .map(f => Math.round((ms(f.t) - t0) / 3600000));
+  const peakPool = scoredIdx.length ? scoredIdx : fcIdx;
+  const peakI = peakPool.reduce((a, i) => (fc[i] > fc[a] ? i : a), peakPool[0]);
+  const peakP = parts(isoAt(peakI));
+  const peakMark = `<circle cx="${X(peakI)}" cy="${Y(fc[peakI])}" r="4" fill="${catOf(fc[peakI]).color}" stroke="#fff" stroke-width="2"/>`
+    + `<text x="${X(peakI)}" y="${Y(fc[peakI]) - 9}" text-anchor="middle" font-size="10" font-weight="800" fill="${catOf(fc[peakI]).color}"`
+    + ` style="paint-order:stroke;stroke:rgba(255,255,255,.9);stroke-width:3px">peak ${Math.round(fc[peakI])} · ${hourLabel(peakP.h)}</text>`;
+
+  chartbox.querySelectorAll("svg").forEach(n => n.remove());
+  chartbox.insertAdjacentHTML("afterbegin", `
+  <svg width="${W}" height="${H}" role="img" aria-label="PM2.5 chart for ${st.name}">
+    <defs>
+      <linearGradient id="fcStroke" gradientUnits="userSpaceOnUse" x1="${padL}" y1="0" x2="${W - padR}" y2="0">${stops}</linearGradient>
+      <linearGradient id="fcFill" gradientUnits="userSpaceOnUse" x1="${padL}" y1="0" x2="${W - padR}" y2="0">${stopsA}</linearGradient>
+      <linearGradient id="obsFill" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#3a3a3c" stop-opacity=".12"/><stop offset="1" stop-color="#3a3a3c" stop-opacity="0"/>
+      </linearGradient>
+      <clipPath id="reveal"><rect id="revealRect" x="${padL}" y="0" width="0" height="${H}"/></clipPath>
+    </defs>
+    ${grid}${labels}${days}${nowLine}
+    <g clip-path="url(#reveal)">${obsArea}${fcArea}${obsPaths}${fcPaths}${peakMark}</g>
+    <line id="guide" x1="0" y1="${padT}" x2="0" y2="${padT + ih}" stroke="rgba(28,28,30,.4)" stroke-width="1" opacity="0"/>
+    <circle id="scrubDot" r="5.5" fill="#3a3a3c" stroke="#fff" stroke-width="2.4" opacity="0"/>
+    <rect id="scrubZone" x="${padL}" y="${padT - 6}" width="${iw}" height="${ih + 12}" fill="transparent"/>
+  </svg>`);
+  chart = {W, H, padL, padR, padT, ih, iw, N, obs, fc, X, Y, t0, lastObs};
+
+  /* draw-in reveal */
+  const rect = chartbox.querySelector("#revealRect");
+  if (revealAnim) cancelAnimationFrame(revealAnim);
+  if (!animate || REDUCED){ rect.setAttribute("width", iw + padR); }
+  else {
+    const startT = performance.now(), dur = 1150;
+    (function tick(t){
+      const p = Math.min(1, (t - startT) / dur), e = 1 - Math.pow(1 - p, 3);
+      rect.setAttribute("width", (iw + padR) * e);
+      if (p < 1) revealAnim = requestAnimationFrame(tick);
+    })(startT);
+  }
+
+  /* scrubbing */
+  const zone = chartbox.querySelector("#scrubZone");
+  const guide = chartbox.querySelector("#guide");
+  const dot = chartbox.querySelector("#scrubDot");
+  function scrub(ev){
+    const box = chartbox.getBoundingClientRect();
+    const x = (ev.touches ? ev.touches[0].clientX : ev.clientX) - box.left;
+    let i = Math.round((x - padL) / iw * (N - 1));
+    i = Math.max(0, Math.min(N - 1, i));
+    let v = obs[i] != null ? obs[i] : fc[i], kind = obs[i] != null ? "Measured" : "Forecast";
+    if (v == null){ for (let k = 1; k < 6 && v == null; k++){
+      if (obs[i - k] != null){ v = obs[i - k]; i -= k; kind = "Measured"; }
+      else if (fc[i + k] != null){ v = fc[i + k]; i += k; kind = "Forecast"; }
+      else if (obs[i + k] != null){ v = obs[i + k]; i += k; kind = "Measured"; }
+      else if (fc[i - k] != null){ v = fc[i - k]; i -= k; kind = "Forecast"; }
+    } }
+    if (v == null) return;
+    const c = catOf(v), p = parts(isoAt(i));
+    guide.setAttribute("x1", X(i)); guide.setAttribute("x2", X(i)); guide.setAttribute("opacity", "1");
+    dot.setAttribute("cx", X(i)); dot.setAttribute("cy", Y(v));
+    dot.setAttribute("fill", c.color); dot.setAttribute("opacity", "1");
+    tooltip.innerHTML = `<div class="tt-t">${DAYS[p.dow]} ${p.dd} ${MONTHS[p.m - 1]} · ${hourLabel(p.h)} · ${kind}</div>`
+      + `<div class="tt-v">${Math.round(v)} <small>µg/m³ PM2.5</small></div>`
+      + `<div class="tt-c" style="color:${c.color == "#d9930d" ? "#f5b93f" : c.color}">${c.name}</div>`
+      + `<div class="tt-a">${c.advice}</div>`;
+    tooltip.style.left = Math.max(72, Math.min(W - 72, X(i))) + "px";
+    tooltip.classList.add("on");
+  }
+  function endScrub(){ guide.setAttribute("opacity", "0"); dot.setAttribute("opacity", "0"); tooltip.classList.remove("on"); }
+  zone.addEventListener("pointermove", scrub);
+  zone.addEventListener("pointerdown", scrub);
+  zone.addEventListener("pointerleave", endScrub);
+  zone.addEventListener("pointerup", endScrub);
+
+  const a = parts(st.observed[0].t), b = parts(st.forecast[st.forecast.length - 1].t);
+  document.getElementById("chartRange").textContent =
+    `${DAYS[a.dow]} ${a.dd} ${MONTHS[a.m - 1]} → ${DAYS[b.dow]} ${b.dd} ${MONTHS[b.m - 1]}`;
+}
+
+/* ---------------- hourly strip + plan ---------------- */
+const WIN_ADVICE = {
+  best:  {"Good": "Perfect for a run or a long walk.", "Satisfactory": "Great for outdoor plans.",
+          "Moderate": "Fine for most people — a good window to be out.", "Poor": "Okay for a short outing; sensitive groups, take care.",
+          "Very Poor": "The least-bad stretch — keep outdoor time short.", "Severe": "Still heavy air — keep it brief outdoors."},
+  worst: {"Good": "Even the toughest stretch is gentle.", "Satisfactory": "Even the toughest stretch is gentle.",
+          "Moderate": "Noticeable — sensitive groups, take it easy.", "Poor": "Sensitive groups should stay in.",
+          "Very Poor": "Keep windows shut and skip the outdoor workout.", "Severe": "Stay indoors; mask up if you must go out."}
+};
+function renderDetail(){
+  const st = stationById(selectedId);
+  const c = catOf(st.now.value);
+  document.getElementById("dName").textContent = st.name;
+  document.getElementById("dSub").textContent = st.fullName.replace(", Mumbai - ", " · ").replace(", Mumbai", "") + " station";
+  countUp(document.getElementById("dNow"), st.now.value);
+  renderChart(true);
+
+  /* tomorrow hour-by-hour */
+  const tmr = DATA.forecastDates.tomorrow;
+  const rows = st.forecast.filter(f => f.s && parts(f.t).date === tmr);
+  const day = st.days[tmr];
+  document.getElementById("tmrDate").textContent =
+    `${DAYS[parts(tmr + "T00:00:00+05:30").dow]} ${parts(tmr + "T00:00:00+05:30").dd} ${MONTHS[parts(tmr + "T00:00:00+05:30").m - 1]}`;
+  document.getElementById("hours").innerHTML = rows.map(f => {
+    const cc = catOf(f.v), p = parts(f.t);
+    const tag = Math.round(f.v) === Math.round(day.peak.value) ? `<div class="tag" style="color:${cc.color}">Peak</div>`
+      : Math.round(f.v) === Math.round(day.best.value) ? `<div class="tag" style="color:${cc.color}">Best</div>`
+      : `<div class="tag"></div>`;
+    return `<div class="hr" style="background:${rgba(cc.color, .13)}">
+      <div class="h">${hourLabel(p.h)}</div><div class="v" style="color:${cc.color}">${Math.round(f.v)}</div>${tag}</div>`;
+  }).join("");
+
+  /* plan your day */
+  document.getElementById("planStation").textContent = st.name + " · tomorrow";
+  const bw = day.bestWindow, ww = day.worstWindow;
+  const bc = catOf(bw.avg), wc = catOf(ww.avg);
+  document.getElementById("planBest").style.background = rgba(bc.color, .12);
+  document.getElementById("bestT").textContent = `${bw.startHour} – ${bw.endHour} · cleanest stretch`;
+  document.getElementById("bestS").innerHTML =
+    `Average PM2.5 <b>${Math.round(bw.avg)}</b> (${bc.name}). ${WIN_ADVICE.best[bc.name]}`;
+  document.getElementById("planWorst").style.background = rgba(wc.color, .12);
+  document.getElementById("worstT").textContent = `${ww.startHour} – ${ww.endHour} · dirtiest stretch`;
+  document.getElementById("worstS").innerHTML =
+    `Average PM2.5 <b>${Math.round(ww.avg)}</b> (${wc.name}). ${WIN_ADVICE.worst[wc.name]}`;
+
+  /* day after tomorrow */
+  const d2 = st.days[DATA.forecastDates.dayAfter], d1 = day;
+  const rel = Math.abs(d2.avg - d1.avg) / d1.avg < 0.03
+    ? "follows almost the same daily rhythm"
+    : d2.avg < d1.avg ? `breathes a little easier overall (average ${Math.round(d2.avg)} vs ${Math.round(d1.avg)})`
+    : `turns a little heavier overall (average ${Math.round(d2.avg)} vs ${Math.round(d1.avg)})`;
+  document.getElementById("day2").innerHTML =
+    `<b>Thursday ${parts(DATA.forecastDates.dayAfter + "T00:00:00+05:30").dd} Nov</b> ${rel} — peak <b>${Math.round(d2.peak.value)}</b> around <b>${d2.peak.hour}</b>, best air <b>${Math.round(d2.best.value)}</b> at <b>${d2.best.hour}</b>.`;
+}
+
+/* ---------------- selection ---------------- */
+function selectStation(id, scroll){
+  selectedId = id;
+  refreshMapSelection();
+  refreshCardSelection();
+  renderDetail();
+  if (scroll){
+    const card = document.querySelector(`.scard[data-id="${id}"]`);
+    if (card) card.scrollIntoView({behavior: REDUCED ? "auto" : "smooth", inline: "center", block: "nearest"});
+  }
+}
+let resizeT;
+window.addEventListener("resize", () => {
+  clearTimeout(resizeT);
+  resizeT = setTimeout(() => renderChart(false), 160);
+});
+
+const hashMatch = location.hash.match(/station=(\d+)/);
+if (hashMatch && stationById(Number(hashMatch[1]))) selectedId = Number(hashMatch[1]);
+selectStation(selectedId, false);
+</script>
+</body>
+</html>
