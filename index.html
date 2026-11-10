@@ -168,6 +168,113 @@
   .foot-credit{margin-top:12px;font-size:13px;font-weight:600;color:var(--ink2);line-height:1.55}
   .foot-credit b{color:var(--ink)}
 
+  /* ---------- compare all stations ---------- */
+  .compare{margin-top:4px}
+  .cmp-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;padding:13px 2px 12px;border-top:1px solid rgba(60,60,67,.09)}
+  .cmp-row:first-child{border-top:none;padding-top:8px}
+  .cmp-nm{font-size:16px;font-weight:800;letter-spacing:-.01em;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .cmp-nm .chip{font-size:11px;padding:3.5px 9px}
+  .cmp-now{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;text-align:right;line-height:1.1}
+  .cmp-now small{font-size:11px;font-weight:600;color:var(--ink2)}
+  .cmp-stats{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:3px}
+  .cmp-stat .k{font-size:9.8px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);line-height:1.3}
+  .cmp-stat .v{font-size:15.5px;font-weight:800;margin-top:1px;font-variant-numeric:tabular-nums}
+  .cmp-stat .s{font-size:11px;color:var(--ink2);line-height:1.3}
+
+  /* ---------- what the colours mean ---------- */
+  .guide{margin-top:6px}
+  .g-row{display:flex;gap:11px;align-items:flex-start;padding:10px;border-radius:16px;border-top:1px solid rgba(60,60,67,.06)}
+  .g-row:first-child{border-top:none}
+  .g-dot{flex:0 0 13px;width:13px;height:13px;border-radius:50%;margin-top:3px}
+  .g-main{flex:1;min-width:0}
+  .g-nm{font-size:14.5px;font-weight:800}
+  .g-rg{font-size:11.5px;color:var(--ink3);font-weight:600;margin-left:6px}
+  .g-tag{display:inline-block;font-size:9.8px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#fff;padding:2.5px 8px;border-radius:999px;margin-left:8px;vertical-align:2px;white-space:nowrap}
+  .g-ad{font-size:12.8px;color:var(--ink2);line-height:1.4;margin-top:1px}
+
+  /* ---------- next 48 hours ---------- */
+  .outlook-lead{font-size:14.5px;line-height:1.5;margin-top:10px}
+  .outlook{display:grid;gap:14px;margin-top:12px}
+  .oday{border:1px solid rgba(255,255,255,.65);border-radius:20px;padding:13px 14px 7px;background:rgba(255,255,255,.4)}
+  .oday h3{font-size:15.5px;font-weight:800;letter-spacing:-.01em}
+  .oday .osub{font-size:12px;color:var(--ink2);margin-top:1px}
+  .orow{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:8px 0;border-top:1px solid rgba(60,60,67,.08)}
+  .orow .on{font-weight:700;font-size:13.5px;white-space:nowrap}
+  .orow .ov{color:var(--ink2);font-size:12.8px;font-variant-numeric:tabular-nums;text-align:right;line-height:1.45}
+  .orow .ov b{color:var(--ink)}
+
+  /* outlook rows stack below desktop width so the stats never wrap mid-phrase */
+  @media (max-width:1023px){
+    .orow{flex-direction:column;align-items:flex-start;gap:1px}
+    .orow .ov{text-align:left}
+  }
+
+  /* ================= TABLET · ~768px ================= */
+  @media (min-width:700px){
+    .wrap{max-width:740px;padding:32px 24px 38px}
+    h1{font-size:46px}
+    .hero-num .big{font-size:94px}
+    .scroller{
+      display:grid;grid-template-columns:1fr 1fr;gap:14px;
+      overflow:visible;padding:16px 0 2px;margin:0;scroll-snap-type:none;
+    }
+    .scard{flex:none}
+    .scard .val{font-size:40px}
+    .hours{display:grid;grid-template-columns:repeat(auto-fill,minmax(56px,1fr));gap:8px;overflow:visible;padding:12px 0 2px}
+    .guide{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .g-row{border:1px solid rgba(255,255,255,.6);background:rgba(255,255,255,.38)}
+    .g-row:first-child{border-top:1px solid rgba(255,255,255,.6)}
+    .outlook{grid-template-columns:1fr 1fr}
+  }
+
+  /* ================= DESKTOP · ≥1024px ================= */
+  @media (min-width:1024px){
+    .wrap{
+      max-width:1240px;padding:42px 34px 48px;
+      display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+      gap:22px 26px;align-items:start;
+      grid-template-areas:
+        "hero map"
+        "cards cards"
+        "detail detail"
+        "hours plan"
+        "guide compare"
+        "outlook outlook"
+        "footer footer";
+    }
+    .wrap>*{min-width:0}
+    .wrap .card{margin-top:0}
+    .card{padding:22px 24px}
+    header{grid-area:hero;align-self:center;padding:4px 8px 4px 2px}
+    .map-card{grid-area:map}
+    .scroller{grid-area:cards}
+    .detail-card{grid-area:detail}
+    .hours-card{grid-area:hours}
+    .plan-card{grid-area:plan}
+    .guide-card{grid-area:guide}
+    .compare-card{grid-area:compare}
+    .outlook-card{grid-area:outlook}
+    footer{grid-area:footer;margin-top:2px}
+    h1{font-size:56px}
+    h1 .thin{font-size:21px}
+    .hero-num .big{font-size:112px}
+    .hero-summary{font-size:19px;max-width:46ch}
+    .mapbox{max-width:400px;margin-left:auto;margin-right:auto}
+    .scroller{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:16px;
+      overflow:visible;padding:0;margin:0;scroll-snap-type:none;
+    }
+    .scard{flex:none;padding:16px}
+    .scard .val{font-size:42px}
+    .detail-head .nm{font-size:26px}
+    .detail-now .v{font-size:46px}
+    .hours{display:grid;grid-template-columns:repeat(auto-fill,minmax(60px,1fr));gap:8px;overflow:visible;padding:12px 0 2px}
+    .guide{display:block}
+    .g-row{border:none;border-top:1px solid rgba(60,60,67,.06);background:transparent}
+    .g-row:first-child{border-top:none}
+    .cmp-stats{gap:10px}
+  }
+
   @media (prefers-reduced-motion: reduce){
     *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
     html{scroll-behavior:auto}
@@ -199,7 +306,7 @@
   </header>
 
   <!-- MAP -->
-  <section class="card rise" style="animation-delay:.26s" aria-label="Station map">
+  <section class="card rise map-card" style="animation-delay:.26s" aria-label="Station map">
     <h2>Across the city <span class="hint">tap a station</span></h2>
     <div class="mapbox" id="mapbox"></div>
     <div class="map-caption"><span>Cleanest right now: <b id="cleanNow">–</b></span><span>Dirtiest: <b id="dirtyNow">–</b></span></div>
@@ -209,7 +316,7 @@
   <div class="scroller rise" style="animation-delay:.32s" id="scroller" role="tablist" aria-label="Stations"></div>
 
   <!-- DETAIL + CHART -->
-  <section class="card rise" style="animation-delay:.38s" aria-label="Station detail">
+  <section class="card rise detail-card" style="animation-delay:.38s" aria-label="Station detail">
     <div class="detail-head">
       <div>
         <div class="nm" id="dName">–</div>
@@ -228,13 +335,16 @@
       <span><span class="ln fc"></span> Our forecast</span>
       <span style="margin-left:auto" id="chartRange"></span>
     </div>
+  </section>
 
-    <h2 style="margin-top:20px">Tomorrow, hour by hour <span class="hint" id="tmrDate"></span></h2>
+  <!-- TOMORROW, HOUR BY HOUR -->
+  <section class="card rise hours-card" style="animation-delay:.41s" aria-label="Tomorrow hour by hour">
+    <h2>Tomorrow, hour by hour <span class="hint" id="tmrDate"></span></h2>
     <div class="hours" id="hours"></div>
   </section>
 
   <!-- PLAN YOUR DAY -->
-  <section class="card rise" style="animation-delay:.44s" aria-label="Plan your day">
+  <section class="card rise plan-card" style="animation-delay:.44s" aria-label="Plan your day">
     <h2>Plan your day · <span style="letter-spacing:0;text-transform:none" id="planStation"></span></h2>
     <div class="plan">
       <div class="plan-row" id="planBest">
@@ -253,8 +363,27 @@
     <p class="day2" id="day2"></p>
   </section>
 
+  <!-- WHAT THE COLOURS MEAN -->
+  <section class="card rise guide-card" style="animation-delay:.47s" aria-label="What the colours mean">
+    <h2>What the colours mean <span class="hint">CPCB bands · PM2.5</span></h2>
+    <div class="guide" id="guide"></div>
+  </section>
+
+  <!-- COMPARE ALL STATIONS -->
+  <section class="card rise compare-card" style="animation-delay:.5s" aria-label="Compare all stations">
+    <h2>All four stations, side by side <span class="hint">tomorrow</span></h2>
+    <div class="compare" id="compare"></div>
+  </section>
+
+  <!-- NEXT 48 HOURS -->
+  <section class="card rise outlook-card" style="animation-delay:.53s" aria-label="The next 48 hours">
+    <h2>The next 48 hours <span class="hint">every station, both days</span></h2>
+    <p class="outlook-lead" id="outlookLead"></p>
+    <div class="outlook" id="outlook"></div>
+  </section>
+
   <!-- FOOTER -->
-  <footer class="rise" style="animation-delay:.5s">
+  <footer class="rise" style="animation-delay:.58s">
     <p class="foot-note">PM2.5 levels use CPCB category bands for PM2.5 (24-hour bands, shown here against hourly values so the colours stay easy to read). The solid line is measured readings; the coloured line is our model&rsquo;s forecast — the scored forecast window is Wed 11 – Thu 12 Nov 2026.</p>
     <p class="foot-credit">Forecasts by <b>Manesh Jadhav&rsquo;s model</b> — Google Mumbai Data Challenge (Zindi).<br>Data: CPCB via OpenAQ · Zindi challenge data. Made with care in Mumbai.</p>
   </footer>
@@ -491,7 +620,8 @@ function runsOf(arr){
 
 function renderChart(animate){
   const st = stationById(selectedId);
-  const W = Math.max(300, chartbox.clientWidth), H = 216;
+  const W = Math.max(300, chartbox.clientWidth);
+  const H = W >= 900 ? 304 : W >= 560 ? 252 : 216;
   const padL = 32, padR = 10, padT = 16, padB = 24;
   const iw = W - padL - padR, ih = H - padT - padB;
 
@@ -698,6 +828,59 @@ function renderDetail(){
   document.getElementById("day2").innerHTML =
     `<b>Thursday ${parts(DATA.forecastDates.dayAfter + "T00:00:00+05:30").dd} Nov</b> ${rel} — peak <b>${Math.round(d2.peak.value)}</b> around <b>${d2.peak.hour}</b>, best air <b>${Math.round(d2.best.value)}</b> at <b>${d2.best.hour}</b>.`;
 }
+
+/* ---------------- what the colours mean ---------------- */
+(function buildGuide(){
+  const cityCat = catOf(DATA.city.now);
+  document.getElementById("guide").innerHTML = CATS.map((c, i) => {
+    const lo = i === 0 ? 0 : CATS[i - 1].max + 1;
+    const rg = i === CATS.length - 1 ? `${lo}+` : `${lo}–${c.max}`;
+    const here = c.name === cityCat.name;
+    return `<div class="g-row"${here ? ` style="background:${rgba(c.color, .10)};box-shadow:inset 0 0 0 1.5px ${rgba(c.color, .45)}"` : ""}>
+      <span class="g-dot" style="background:${c.color}"></span>
+      <div class="g-main">
+        <div><span class="g-nm">${c.name}</span><span class="g-rg">${rg} µg/m³</span>${here ? `<span class="g-tag" style="background:${c.color}">City right now</span>` : ""}</div>
+        <div class="g-ad">${c.advice}</div>
+      </div>
+    </div>`;
+  }).join("");
+})();
+
+/* ---------------- compare all stations ---------------- */
+(function buildCompare(){
+  const tmr = DATA.forecastDates.tomorrow;
+  document.getElementById("compare").innerHTML = DATA.stations.map(s => {
+    const c = catOf(s.now.value), d = s.days[tmr];
+    return `<div class="cmp-row">
+      <div class="cmp-nm">${s.name}<span class="chip soft" style="background:${rgba(c.color, .18)};color:${c.color}"><i></i>${c.name}</span></div>
+      <div class="cmp-now" style="color:${c.color}">${Math.round(s.now.value)}<small> µg/m³ now</small></div>
+      <div class="cmp-stats">
+        <div class="cmp-stat"><div class="k">Tomorrow peak</div><div class="v">${Math.round(d.peak.value)}</div><div class="s">at ${d.peak.hour}</div></div>
+        <div class="cmp-stat"><div class="k">Tomorrow best</div><div class="v">${Math.round(d.best.value)}</div><div class="s">at ${d.best.hour}</div></div>
+        <div class="cmp-stat"><div class="k">Cleanest stretch</div><div class="v">${Math.round(d.bestWindow.avg)}</div><div class="s">${d.bestWindow.startHour} – ${d.bestWindow.endHour} avg</div></div>
+        <div class="cmp-stat"><div class="k">Day average</div><div class="v">${Math.round(d.avg)}</div><div class="s">tomorrow</div></div>
+      </div>
+    </div>`;
+  }).join("");
+})();
+
+/* ---------------- next 48 hours ---------------- */
+(function buildOutlook(){
+  const dates = [DATA.forecastDates.tomorrow, DATA.forecastDates.dayAfter];
+  const tmr = dates[0];
+  const byAvg = [...DATA.stations].sort((a, b) => b.days[tmr].avg - a.days[tmr].avg);
+  document.getElementById("outlookLead").innerHTML =
+    `Tomorrow, <b>${byAvg[0].name}</b> carries the city&rsquo;s heaviest air (day average <b>${Math.round(byAvg[0].days[tmr].avg)}</b>), while <b>${byAvg[byAvg.length - 1].name}</b> stays the cleanest (day average <b>${Math.round(byAvg[byAvg.length - 1].days[tmr].avg)}</b>).`;
+  document.getElementById("outlook").innerHTML = dates.map((date, di) => {
+    const p = parts(date + "T00:00:00+05:30");
+    const label = di === 0 ? `Tomorrow · ${DAYS[p.dow]} ${p.dd} ${MONTHS[p.m - 1]}` : `${DAYS[p.dow]} ${p.dd} ${MONTHS[p.m - 1]}`;
+    const rows = DATA.stations.map(s => {
+      const d = s.days[date];
+      return `<div class="orow"><span class="on">${s.name}</span><span class="ov">avg <b>${Math.round(d.avg)}</b> · peak <b>${Math.round(d.peak.value)}</b> at ${d.peak.hour} · best <b>${Math.round(d.best.value)}</b> at ${d.best.hour}</span></div>`;
+    }).join("");
+    return `<div class="oday"><h3>${label}</h3><div class="osub">Day average · peak · cleanest hour, per station</div>${rows}</div>`;
+  }).join("");
+})();
 
 /* ---------------- selection ---------------- */
 function selectStation(id, scroll){
