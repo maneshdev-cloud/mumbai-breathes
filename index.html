@@ -331,10 +331,56 @@ function countUp(el, to, suffix){
 })();
 
 /* ---------------- map ---------------- */
-const PROJ = {lon0: 72.76, lon1: 73.00, lat0: 19.32, lat1: 18.88, x0: 26, x1: 314, y0: 24, y1: 396};
+const PROJ = {lon0: 72.715, lon1: 73.035, lat0: 19.335, lat1: 18.865, x0: 26, x1: 314, y0: 24, y1: 396};
 const px = lon => PROJ.x0 + (lon - PROJ.lon0) / (PROJ.lon1 - PROJ.lon0) * (PROJ.x1 - PROJ.x0);
 const py = lat => PROJ.y0 + (PROJ.lat0 - lat) / (PROJ.lat0 - PROJ.lat1) * (PROJ.y1 - PROJ.y0);
 const LABEL_SIDE = {11611: "end", 11606: "start", 3409511: "end", 3409510: "start"};
+
+/* Real Salsette-island coastline as (lon, lat) waypoints: from the Colaba tip up
+   the west coast (Back Bay sag, Malabar Point, Haji Ali, Worli, the deep Mahim
+   Bay dent, Bandra point jutting back west, Juhu, Versova, Madh point, the
+   Malad Creek inlet, Gorai/Uttan bumps), east along the Vasai Creek south
+   shore (notch at the creek mouth), then down the Thane Creek shore (Thane
+   bulge, Mulund, Bhandup, Vikhroli, Mankhurd, the Trombay bulge) and the
+   harbour shore back to the tip. Projected with the same px/py as the station
+   dots, so coastline and dots always agree. */
+const COAST = [
+  [72.834,18.897],[72.826,18.910],[72.824,18.926],[72.820,18.941],[72.805,18.951],
+  [72.795,18.958],[72.792,18.968],[72.789,18.979],[72.797,18.991],[72.806,19.003],
+  [72.813,19.016],[72.823,19.027],[72.841,19.036],[72.866,19.046],[72.868,19.053],
+  [72.848,19.059],[72.820,19.056],[72.806,19.064],[72.810,19.079],[72.817,19.097],
+  [72.820,19.114],[72.814,19.129],[72.801,19.141],[72.790,19.150],[72.798,19.158],
+  [72.820,19.162],[72.845,19.164],[72.852,19.172],[72.838,19.178],[72.812,19.176],
+  [72.796,19.184],[72.782,19.196],[72.778,19.220],[72.776,19.245],[72.780,19.268],
+  [72.774,19.285],[72.790,19.297],[72.814,19.303],[72.845,19.305],
+  [72.878,19.301],[72.908,19.295],[72.927,19.285],[72.941,19.262],[72.957,19.237],
+  [72.971,19.213],[72.979,19.191],[72.967,19.167],[72.954,19.141],[72.944,19.111],
+  [72.938,19.081],[72.940,19.055],[72.951,19.031],[72.962,19.007],[72.956,18.987],
+  [72.934,18.977],[72.906,18.978],[72.886,18.963],[72.869,18.945],[72.857,18.928],
+  [72.846,18.910]
+];
+/* Mainland — faint backdrop across Thane Creek and across Vasai Creek to the
+   north, its shore tracking the island's so both creeks read as channels. */
+const MAINLAND = [
+  [72.748,19.372],[73.075,19.372],[73.075,18.930],[72.998,18.962],[72.990,19.005],
+  [72.988,19.060],[72.992,19.120],[72.997,19.190],[72.995,19.250],[72.991,19.298],
+  [72.958,19.322],[72.884,19.327],[72.822,19.325],[72.772,19.335],[72.750,19.352]
+];
+/* Closed Catmull-Rom curve THROUGH the projected points with low tension
+   (0.12): only light corner rounding, so real coastline angles survive —
+   deep dents (Mahim Bay, Malad Creek) stay deep, points (Bandra, Madh,
+   Gorai, Trombay, Colaba) stay pointed. */
+function smoothClosed(pts, tension){
+  const n = pts.length, t = tension == null ? 0.12 : tension;
+  let d = `M${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
+  for (let i = 0; i < n; i++){
+    const p0 = pts[(i - 1 + n) % n], p1 = pts[i], p2 = pts[(i + 1) % n], p3 = pts[(i + 2) % n];
+    const c1x = p1[0] + (p2[0] - p0[0]) * t, c1y = p1[1] + (p2[1] - p0[1]) * t;
+    const c2x = p2[0] - (p3[0] - p1[0]) * t, c2y = p2[1] - (p3[1] - p1[1]) * t;
+    d += ` C${c1x.toFixed(1)} ${c1y.toFixed(1)} ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
+  }
+  return d + " Z";
+};
 
 (function buildMap(){
   const dots = DATA.stations.map(s => {
@@ -350,27 +396,29 @@ const LABEL_SIDE = {11611: "end", 11606: "start", 3409511: "end", 3409510: "star
         style="paint-order:stroke;stroke:rgba(255,255,255,.9);stroke-width:3.5px">${Math.round(s.now.value)} · ${c.name}</text>
     </g>`;
   }).join("");
+  const coastD = smoothClosed(COAST.map(p => [px(p[0]), py(p[1])]));
+  const mainlandD = smoothClosed(MAINLAND.map(p => [px(p[0]), py(p[1])]));
   document.getElementById("mapbox").innerHTML = `
-  <svg viewBox="0 0 340 420" role="img" aria-label="Stylised map of Mumbai with four air quality stations">
+  <svg viewBox="0 0 340 420" role="img" aria-label="Map of Mumbai with four air quality stations">
     <defs>
       <linearGradient id="sea" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stop-color="#e8f3ff"/><stop offset="1" stop-color="#f6fbff"/>
+        <stop offset="0" stop-color="#cde3ff"/><stop offset="1" stop-color="#eaf5ff"/>
       </linearGradient>
       <linearGradient id="land" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0" stop-color="#fdfefb"/><stop offset="1" stop-color="#edf3e9"/>
       </linearGradient>
     </defs>
     <rect x="0" y="0" width="340" height="420" rx="18" fill="url(#sea)"/>
-    <path d="M322 96 C338 170 338 268 326 344 L340 344 L340 96 Z" fill="url(#land)" opacity=".55"/>
+    <path d="${mainlandD}" fill="url(#land)" opacity=".45"/>
+    <ellipse cx="${px(72.932)}" cy="${py(18.965)}" rx="11" ry="5.5" fill="url(#land)" opacity=".85"
+      stroke="rgba(74,106,74,.35)" stroke-width="1"/>
     <path style="filter:drop-shadow(0 8px 14px rgba(60,90,60,.20))"
-      d="M120 18 C190 4 268 26 292 84 C306 118 288 150 268 168 C292 200 286 262 252 296
-         C232 318 208 330 188 336 C172 356 168 384 150 408 C138 417 122 414 112 398
-         C100 372 100 344 106 322 C84 300 66 268 60 226 C52 180 62 128 84 92 C96 52 104 30 120 18 Z"
-      fill="url(#land)" stroke="rgba(90,120,90,.28)" stroke-width="1.4"/>
+      d="${coastD}"
+      fill="url(#land)" stroke="rgba(74,106,74,.55)" stroke-width="1.9"/>
     <text x="30" y="212" font-size="10" letter-spacing="3.5" fill="#7aa7c7" opacity=".75"
       transform="rotate(-90 30 212)" text-anchor="middle" font-weight="600">ARABIAN SEA</text>
-    <text x="306" y="212" font-size="9" letter-spacing="2.5" fill="#9db98a" opacity=".8"
-      transform="rotate(90 306 212)" text-anchor="middle" font-weight="600">THANE CREEK</text>
+    <text x="262" y="212" font-size="9" letter-spacing="2.5" fill="#9db98a" opacity=".8"
+      transform="rotate(90 262 212)" text-anchor="middle" font-weight="600">THANE CREEK</text>
     ${dots}
   </svg>`;
   document.querySelectorAll(".station-dot").forEach(g =>
